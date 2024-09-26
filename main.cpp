@@ -4,17 +4,18 @@
 int main()
 {
     Stack a;
-    StackCtor(&a);
+    int err = No_Errors;
+    if (!err) err = StackCtor(&a);
     for(int i = 0; i < 1000; ++i)
     {
-        StackPush(&a, i + 1);
+        if (!err) err = StackPush(&a, i + 1);
     }
-    StackDump(&a);
+    if (!err) err = StackDump(&a);
     printf("\n\n");
 
     for(int i = 0; i < 900; ++i)
     {
-        StackPop(&a);
+        if (!err) err = StackPop(&a);
     }
     StackDump(&a);
 

@@ -6,8 +6,10 @@
 typedef int stack_type;
 enum StackErrors {
     No_Errors = 0,
-    Fail_Calloc = 1,
     Error_Size = 2,
+    Error_Capacity = 3,
+    Null_Ptr = 4,
+    Null_Data_Ptr = 5,
 };
 
 struct Stack
