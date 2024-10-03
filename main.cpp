@@ -1,24 +1,29 @@
 #include <stdio.h>
-#include "struct_public_func.h"
+#include <stdlib.h>
+#include "struct_func.h"
 
 int main()
 {
     Stack a;
+    //ON_DEBUG(FILE* output = fopen("output.txt", "w");)
+
     int err = No_Errors;
-    if (!err) err = StackCtor(&a);
+    if (!err) err = STACK_CTOR(a);
+
     for(int i = 0; i < 1000; ++i)
     {
         if (!err) err = StackPush(&a, i + 1);
     }
-    if (!err) err = StackDump(&a);
+    if (!err) err = STACK_DUMP(&a);
     printf("\n\n");
 
     for(int i = 0; i < 900; ++i)
     {
         if (!err) err = StackPop(&a);
     }
-    StackDump(&a);
+    STACK_DUMP(&a);
 
     printf("\nTROLOLOLOLO LOLOLO LOLOLO EEE\n");
+
     return 0;
 }
