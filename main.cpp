@@ -22,7 +22,7 @@ int main()
     }
     STACK_DUMP(&a);
 
-    printf("\nTROLOLOLOLO LOLOLO LOLOLO EEE\n");
+    printf("\nTROLOLOLOLO LOLOLO LOLOLO EEEq\n");
     StackDtor(&a);
 
     return 0;

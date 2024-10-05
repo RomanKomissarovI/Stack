@@ -4,6 +4,9 @@
 #include "stack_func.h"
 
 ON_DEBUG(static FILE* output = fopen("output.txt", "w");)
+static const long long k_Hash_xor = 65535;
+static const long long k_Hash_init = 7914;
+static const long long k_Hash_mod = 1e9 + 7;
 
 int StackPush(Stack* stk, stack_t a)
 {
@@ -23,6 +26,7 @@ int StackPush(Stack* stk, stack_t a)
     (stk->size)++;
 
     *((stack_t*) stk->data + stk->size - 1) = a;
+    stk->hash_data = (stk->hash_data + (k_Hash_xor ^ a)) % k_Hash_mod;
 
     return err;
 }
@@ -34,9 +38,7 @@ int StackPop(Stack* stk)
     err = StackError(stk);
     DEBUG_PR_ERR(err);
 
-    (stk->size)--;
-
-    if (stk->size <= stk->capacity / 2.5 - 5)
+    if (stk->size - 1 <= stk->capacity / 2.5 - 5)
     {
         err = Recalloc(stk, stk->size, stk->capacity / 2);
         DEBUG_PR_ERR(err);
@@ -44,7 +46,15 @@ int StackPop(Stack* stk)
         stk->capacity /= 2;
     }
 
-    *((stack_t*) stk->data + stk->size) = (stack_t) 0;
+    (stk->size)--;
+
+    stack_t* a = (stack_t*) stk->data + stk->size;
+    stk->hash_data = (k_Hash_mod + stk->hash_data - (k_Hash_xor ^ (*a))) % k_Hash_mod;
+
+    *a = (stack_t) 0;
+
+    err = StackError(stk);
+    DEBUG_PR_ERR(err);
 
     return err;
 }
@@ -60,6 +70,7 @@ int StackCtor(Stack* stk ON_DEBUG(, const char* name, const char* file, int line
     ON_DEBUG(stk->name = name;)
     ON_DEBUG(stk->file = file;)
     ON_DEBUG(stk->line = line;)
+    ON_DEBUG(stk->hash_data = k_Hash_init;)
 
     stk->data = (char*) calloc(ON_DEBUG(2 * sizeof(canar_t) + 7 + ) stk->capacity * sizeof(stack_t), sizeof(char)); 
 
@@ -113,6 +124,17 @@ int StackError(Stack* stk)
     if (stk->data == nullptr)
     {
         err = Null_Data_Ptr;
+        DEBUG_PR_ERR(err);
+    }
+
+    long long hash = k_Hash_init;
+    for (int i = 0; i < stk->size; ++i)
+    {
+        hash += ((*(stack_t*) (stk->data + i * sizeof(stack_t))) ^ k_Hash_xor) % k_Hash_mod;
+    }
+    if (stk->hash_data != hash)
+    {
+        err = Error_Hash;
         DEBUG_PR_ERR(err);
     }
 
@@ -182,25 +204,22 @@ int Recalloc(Stack* stk, int old_size, int new_capacity)
     {
         DEBUG_PR_ERR(Null_Ptr);
     }
-    //printf("RIGHT CANAR: %d\n", (size_t) (stk->data + old_size * sizeof(stack_t)) % 8);
 
     ON_DEBUG(stk->data -= sizeof(canar_t);)
     stk->data = (char*) realloc(stk->data, ON_DEBUG(2 * sizeof(canar_t) + 7 + ) new_capacity * sizeof(stack_t));
-    
+
+    ON_DEBUG(stk->data += sizeof(canar_t);)
+
     if (stk->data == nullptr)
     {
         DEBUG_PR_ERR(Null_Data_Ptr);
     }
-    //DEBUG_PR_ERR(err);
 
-    ON_DEBUG(stk->data += sizeof(canar_t);)
-    memset(stk->data + old_size * sizeof(stack_t), 0, (new_capacity - old_size) * sizeof(stack_t));
+    memset(stk->data + old_size * sizeof(stack_t), '\0', (new_capacity - old_size) * sizeof(stack_t));
+
     ON_DEBUG(size_t ptr_right_canar = (size_t) stk->data + new_capacity * sizeof(stack_t);)
     ON_DEBUG(*(canar_t*) (ptr_right_canar + (sizeof(canar_t) - ptr_right_canar % sizeof(canar_t)) % sizeof(canar_t)) = k_Canar;)    //ON_DEBUG(printf("RIGHT CANAR: %lld", (size_t) &right_canar);)
     DEBUG_PR_ERR(err);
-
-    // ON_DEBUG(size_t ptr_right_canar = (size_t) stk->data + stk->capacity * sizeof(stack_t);)
-    // ON_DEBUG(*(canar_t*) (ptr_right_canar + (sizeof(canar_t) - ptr_right_canar % sizeof(canar_t)) % sizeof(canar_t)) = k_Canar;)
 
     return err;
 }
