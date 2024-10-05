@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "struct_func.h"
+#include "stack_func.h"
 
 int main()
 {
     Stack a;
-    //ON_DEBUG(FILE* output = fopen("output.txt", "w");)
 
     int err = No_Errors;
     if (!err) err = STACK_CTOR(a);
@@ -24,6 +23,7 @@ int main()
     STACK_DUMP(&a);
 
     printf("\nTROLOLOLOLO LOLOLO LOLOLO EEE\n");
+    StackDtor(&a);
 
     return 0;
 }
