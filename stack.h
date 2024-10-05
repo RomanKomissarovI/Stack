@@ -10,6 +10,7 @@ ON_DEBUG(const canar_t k_Canar = 0xBADC0FFEE;)
 
 enum StackErrors {
     No_Errors = 0,
+    Error_Canar = 1,
     Error_Size = 2,
     Error_Capacity = 3,
     Null_Ptr = 4,

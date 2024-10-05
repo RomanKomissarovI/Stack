@@ -13,7 +13,7 @@ int main()
     {
         if (!err) err = StackPush(&a, i + 1);
     }
-    if (!err) err = STACK_DUMP(&a);
+    err = STACK_DUMP(&a);
     printf("\n\n");
 
     for(int i = 0; i < 900; ++i)
