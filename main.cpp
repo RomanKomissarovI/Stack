@@ -14,7 +14,6 @@ int main()
         if (!err) err = StackPush(&a, i + 1);
     }
     err = STACK_DUMP(&a);
-    printf("\n\n");
 
     for(int i = 0; i < 900; ++i)
     {
@@ -22,7 +21,6 @@ int main()
     }
     STACK_DUMP(&a);
 
-    printf("\nTROLOLOLOLO LOLOLO LOLOLO EEEq\n");
     StackDtor(&a);
 
     return 0;

@@ -15,7 +15,8 @@ enum StackErrors {
     Error_Capacity = 3,
     Null_Ptr = 4,
     Null_Data_Ptr = 5,
-    Error_Hash = 6,
+    Error_Hash_Data = 6,
+    Error_Hash_Stack = 7,
 };
 
 struct Stack
@@ -24,9 +25,10 @@ struct Stack
     ON_DEBUG(const char* file;)
     ON_DEBUG(int line;)
 
-    char* data;
     int size;
     int capacity;
+    ON_DEBUG(long long hash_stack;)
+    char* data;
     ON_DEBUG(long long hash_data;)
 };
 
