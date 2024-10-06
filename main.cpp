@@ -15,7 +15,7 @@ int main()
     }
     err = STACK_DUMP(&a);
 
-    for(int i = 0; i < 900; ++i)
+    for(int i = 0; i < 960; ++i)
     {
         if (!err) err = StackPop(&a);
     }
